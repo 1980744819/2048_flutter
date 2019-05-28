@@ -3,19 +3,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart' as prefix0;
+import 'package:flutter_2048/conf.dart';
 import 'package:flutter_2048/grid.dart';
 import 'package:flutter_2048/tmpGrid.dart';
 import 'package:flutter_2048/utils.dart';
 
+import 'data.dart';
+
 void main() => runApp(MyApp());
-
-class Data {
-  int value = 0;
-  Animation left;
-  Animation top;
-
-  Data(this.value, this.left, this.top);
-}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -24,18 +19,19 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.orange,
-      ),
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          primarySwatch: Colors.orange,
+          fontFamily: 'StarJedi'),
       home: MyHomePage(title: '2048'),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -57,11 +53,12 @@ class MyHomePage extends StatefulWidget {
   double spaceBetweenGridDistance = 0;
   double containerWidth = 0;
   double gridWidth = 0;
-  int durationMillionSecond = 100;
+  int durationMillionSecond = 75;
   var gridLeftPositionList = new List<double>();
   var gridTopPositionList = new List<double>();
   final String title;
   var dataMatrix = new List<List<Data>>();
+  bool flag;
 
   void resetDataList() {
     for (int i = 0; i < dataMatrix.length; i++) {
@@ -95,11 +92,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         widget.dataMatrix[i][j].left = new Tween(
                 begin: widget.gridLeftPositionList[j],
                 end: widget.gridLeftPositionList[j])
-            .animate(gridMoveController);
+            .animate(controller);
         widget.dataMatrix[i][j].top = new Tween(
                 begin: widget.gridTopPositionList[i],
                 end: widget.gridTopPositionList[i])
-            .animate(gridMoveController);
+            .animate(controller);
       }
     }
   }
@@ -118,23 +115,19 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             new Tween(
                     begin: widget.gridLeftPositionList[j],
                     end: widget.gridLeftPositionList[j])
-                .animate(gridMoveController),
+                .animate(controller),
             new Tween(
                     begin: widget.gridTopPositionList[i],
                     end: widget.gridTopPositionList[i])
-                .animate(gridMoveController)));
+                .animate(controller)));
       }
     }
   }
 
-  AnimationController gridMoveController;
-  prefix0.AnimationController gridMergeController;
+  AnimationController controller;
 
   void getNewController() {
-    gridMoveController = new AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: widget.durationMillionSecond));
-    gridMergeController = new AnimationController(
+    controller = new AnimationController(
         vsync: this,
         duration: Duration(milliseconds: widget.durationMillionSecond));
   }
@@ -155,15 +148,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     return tmp;
   }
 
+  prefix0.AnimationController getController() {
+    return new AnimationController(
+        vsync: this,
+        duration: Duration(milliseconds: widget.durationMillionSecond));
+  }
+
   @override
   void initState() {
+    controller = getController();
     super.initState();
-    gridMoveController = new AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: widget.durationMillionSecond));
-    gridMergeController = new AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: widget.durationMillionSecond));
   }
 
   int count = 0;
@@ -193,11 +187,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
         if (widget.dataMatrix[i][j].value == 0) {
           res.add(i * widget.dataMatrix.length + j);
-          print('$i,$j');
+//          print('$i,$j');
         }
       }
     }
-    print('--------');
     if (res.length == 0) {
       if (isGameOver()) {
         widget.resetDataList();
@@ -222,10 +215,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         (widget.containerWidth - widget.spaceBetweenGridDistance * 5) / 4;
     widget.gridLeftPositionList = widget.getPositions();
     widget.gridTopPositionList = widget.getPositions();
+    if (widget.flag == null) widget.flag = true;
     initDataMatrix();
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(
+          widget.title,
+          style: menuTextStyle,
+        ),
       ),
       body: Center(
         child: GestureDetector(
@@ -240,24 +237,22 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           onHorizontalDragEnd: (DragEndDetails details) {
             if (details.primaryVelocity > 0) {
               print('right');
-              moveRight();
-              getNewController();
+              right();
             } else {
               print('left');
-              moveLeft();
-              getNewController();
+              left();
             }
           },
           onVerticalDragEnd: (DragEndDetails details) {
 //                print();
             if (details.primaryVelocity < 0) {
               print('up');
-              moveUp();
-              getNewController();
+//              moveUp();
+              up();
             } else {
               print('down');
-              moveDown();
-              getNewController();
+              down();
+//              getNewController();
             }
           },
         ),
@@ -267,46 +262,44 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         children: <Widget>[
           FlatButton(
             onPressed: () {
+//              moveUp();
+//              getNewController();
+              up();
+            },
+            child: Text(
+              "UP",
+              style: buttonTextStyle,
+            ),
+          ),
+          FlatButton(
+            onPressed: () {
+              down();
+//              getNewController();
+            },
+            child: Text("DOWN",style: buttonTextStyle),
+          ),
+          FlatButton(
+            onPressed: () {
+              left();
+            },
+            child: Text("LEFT",style: buttonTextStyle),
+          ),
+          FlatButton(
+            onPressed: () {
+              right();
+            },
+            child: Text("RIGHT",style: buttonTextStyle),
+          ),
+          FlatButton(
+            onPressed: () {
               widget.resetDataList();
               setState(() {});
             },
-            child: Text("RESET"),
-          ),
-          FlatButton(
-            onPressed: () {
-              moveUp();
-              getNewController();
-            },
-            child: Text("UP"),
-          ),
-          FlatButton(
-            onPressed: () {
-              moveDown();
-              getNewController();
-            },
-            child: Text("DOWN"),
-          ),
-          FlatButton(
-            onPressed: () {
-              moveLeft();
-              getNewController();
-            },
-            child: Text("LEFT"),
-          ),
-          FlatButton(
-            onPressed: () {
-              moveRight();
-              getNewController();
-            },
-            child: Text("RIGHT"),
-          ),
+            child: Text("RESET",style: buttonTextStyle),
+          )
         ],
       ),
     );
-  }
-
-  Future<Null> playAnimation() async {
-    await gridMoveController.forward().orCancel;
   }
 
   void printDataMatrix() {
@@ -325,8 +318,96 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     }
   }
 
-  void moveUp() {
-    var distanceMatrix = getMoveUpDistance(widget.dataMatrix);
+//  var stepMap=Map<String,Map<String,Function>>();
+
+  void up() async {
+    if (widget.flag != true) return;
+    widget.flag = false;
+    controller = getController();
+    List<List<int>> distanceMatrix = getMoveUpDistance(widget.dataMatrix);
+    moveUp(distanceMatrix);
+    await controller.forward().orCancel;
+    widget.dataMatrix = getMovedUpGridMatrix(distanceMatrix, widget.dataMatrix);
+    updateDataListPosition();
+    controller = getController();
+    distanceMatrix = getMoveUpMergeDistance(widget.dataMatrix);
+    mergeUp(distanceMatrix);
+    await controller.forward().orCancel;
+    widget.dataMatrix =
+        getMovedUpMergedGridMatrix(distanceMatrix, widget.dataMatrix);
+    updateDataListPosition();
+    getNewTwo();
+    setState(() {});
+    widget.flag = true;
+  }
+
+  void down() async {
+    if (widget.flag != true) return;
+    widget.flag = false;
+    controller = getController();
+    List<List<int>> distanceMatrix = getMoveDownDistance(widget.dataMatrix);
+    moveDown(distanceMatrix);
+    await controller.forward().orCancel;
+    widget.dataMatrix =
+        getMovedDownGridMatrix(distanceMatrix, widget.dataMatrix);
+    updateDataListPosition();
+    controller = getController();
+    distanceMatrix = getMoveDownMergeDistance(widget.dataMatrix);
+    mergeDown(distanceMatrix);
+    await controller.forward().orCancel;
+    widget.dataMatrix =
+        getMovedDownMergedGridMatrix(distanceMatrix, widget.dataMatrix);
+    updateDataListPosition();
+    getNewTwo();
+    setState(() {});
+    widget.flag = true;
+  }
+
+  void left() async {
+    if (widget.flag != true) return;
+    widget.flag = false;
+    controller = getController();
+    List<List<int>> distanceMatrix = getMoveLeftDistance(widget.dataMatrix);
+    moveLeft(distanceMatrix);
+    await controller.forward().orCancel;
+    widget.dataMatrix =
+        getMovedLeftGridMatrix(distanceMatrix, widget.dataMatrix);
+    updateDataListPosition();
+    controller = getController();
+    distanceMatrix = getMoveLeftMergeDistance(widget.dataMatrix);
+    mergeLeft(distanceMatrix);
+    await controller.forward().orCancel;
+    widget.dataMatrix =
+        getMovedLeftMergedGridMatrix(distanceMatrix, widget.dataMatrix);
+    updateDataListPosition();
+    getNewTwo();
+    setState(() {});
+    widget.flag = true;
+  }
+
+  void right() async {
+    if (widget.flag != true) return;
+    widget.flag = false;
+    controller = getController();
+    List<List<int>> distanceMatrix = getMoveRightDistance(widget.dataMatrix);
+    moveRight(distanceMatrix);
+    await controller.forward().orCancel;
+    widget.dataMatrix =
+        getMovedRightGridMatrix(distanceMatrix, widget.dataMatrix);
+    updateDataListPosition();
+    controller = getController();
+    distanceMatrix = getMoveRightMergeDistance(widget.dataMatrix);
+    mergeRight(distanceMatrix);
+    await controller.forward().orCancel;
+    widget.dataMatrix =
+        getMovedRightMergedGridMatrix(distanceMatrix, widget.dataMatrix);
+    updateDataListPosition();
+    getNewTwo();
+    setState(() {});
+    widget.flag = true;
+  }
+
+  void moveUp(List<List<int>> distanceMatrix) {
     double moveUnit = widget.gridWidth + widget.spaceBetweenGridDistance;
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
@@ -334,28 +415,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 begin: widget.dataMatrix[i][j].top.value,
                 end: widget.dataMatrix[i][j].top.value -
                     moveUnit * distanceMatrix[i][j])
-            .animate(gridMoveController)
+            .animate(controller)
               ..addListener(() {
                 setState(() {});
               });
       }
     }
-    widget.dataMatrix[0][0].top.addStatusListener((status) {
-      if (status == prefix0.AnimationStatus.completed) {
-        widget.dataMatrix =
-            getMovedUpGridMatrix(distanceMatrix, widget.dataMatrix);
-        updateDataListPosition();
-        setState(() {});
-//        printDataMatrix();
-//        print('++++++++++++++');
-        mergeUp();
-      }
-    });
-    gridMoveController.forward();
   }
 
-  void mergeUp() {
-    var distanceMatrix = getMoveUpMergeDistance(widget.dataMatrix);
+  void mergeUp(List<List<int>> distanceMatrix) {
     double moveUnit = widget.gridWidth + widget.spaceBetweenGridDistance;
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
@@ -363,30 +431,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 begin: widget.dataMatrix[i][j].top.value,
                 end: widget.dataMatrix[i][j].top.value -
                     moveUnit * distanceMatrix[i][j])
-            .animate(gridMergeController)
+            .animate(controller)
               ..addListener(() {
                 setState(() {});
               });
       }
     }
-    widget.dataMatrix[0][0].top.addStatusListener((status) {
-      if (status == prefix0.AnimationStatus.completed) {
-        widget.dataMatrix =
-            getMovedUpMergedGridMatrix(distanceMatrix, widget.dataMatrix);
-//        printDataMatrix();
-//        print('++++++++++++++');
-        updateDataListPosition();
-        getNewTwo();
-        setState(() {});
-//        printDataMatrix();
-//        print('++++++++++++++');
-      }
-    });
-    gridMergeController.forward();
   }
 
-  void moveDown() {
-    var distanceMatrix = getMoveDownDistance(widget.dataMatrix);
+  void moveDown(List<List<int>> distanceMatrix) {
     double moveUnit = widget.gridWidth + widget.spaceBetweenGridDistance;
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
@@ -394,28 +447,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 begin: widget.dataMatrix[i][j].top.value,
                 end: widget.dataMatrix[i][j].top.value +
                     moveUnit * distanceMatrix[i][j])
-            .animate(gridMoveController)
+            .animate(controller)
               ..addListener(() {
                 setState(() {});
               });
       }
     }
-    widget.dataMatrix[0][0].top.addStatusListener((status) {
-      if (status == prefix0.AnimationStatus.completed) {
-        widget.dataMatrix =
-            getMovedDownGridMatrix(distanceMatrix, widget.dataMatrix);
-        updateDataListPosition();
-        setState(() {});
-//        printDataMatrix();
-//        print('++++++++++++++');
-        mergeDown();
-      }
-    });
-    gridMoveController.forward();
   }
 
-  void mergeDown() {
-    var distanceMatrix = getMoveDownMergeDistance(widget.dataMatrix);
+  void mergeDown(List<List<int>> distanceMatrix) {
     double moveUnit = widget.gridWidth + widget.spaceBetweenGridDistance;
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
@@ -423,30 +463,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 begin: widget.dataMatrix[i][j].top.value,
                 end: widget.dataMatrix[i][j].top.value +
                     moveUnit * distanceMatrix[i][j])
-            .animate(gridMergeController)
+            .animate(controller)
               ..addListener(() {
                 setState(() {});
               });
       }
     }
-    widget.dataMatrix[0][0].top.addStatusListener((status) {
-      if (status == prefix0.AnimationStatus.completed) {
-        widget.dataMatrix =
-            getMovedDownMergedGridMatrix(distanceMatrix, widget.dataMatrix);
-//        printDataMatrix();
-//        print('++++++++++++++');
-        updateDataListPosition();
-        getNewTwo();
-        setState(() {});
-//        printDataMatrix();
-//        print('++++++++++++++');
-      }
-    });
-    gridMergeController.forward();
   }
 
-  void moveLeft() {
-    var distanceMatrix = getMoveLeftDistance(widget.dataMatrix);
+  void moveLeft(List<List<int>> distanceMatrix) {
     double moveUnit = widget.gridWidth + widget.spaceBetweenGridDistance;
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
@@ -454,29 +479,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 begin: widget.dataMatrix[i][j].left.value,
                 end: widget.dataMatrix[i][j].left.value -
                     moveUnit * distanceMatrix[i][j])
-            .animate(gridMoveController)
+            .animate(controller)
               ..addListener(() {
                 setState(() {});
               });
       }
     }
-    widget.dataMatrix[0][0].top.addStatusListener((status) {
-      if (status == prefix0.AnimationStatus.completed) {
-        widget.dataMatrix =
-            getMovedLeftGridMatrix(distanceMatrix, widget.dataMatrix);
-        updateDataListPosition();
-        setState(() {});
-//        printDataMatrix();
-//        print('++++++++++++++');
-        mergeLeft();
-      }
-    });
-    gridMoveController.forward();
   }
 
-  void mergeLeft() {
-    var distanceMatrix = getMoveLeftMergeDistance(widget.dataMatrix);
-    printMatrix(distanceMatrix);
+  void mergeLeft(List<List<int>> distanceMatrix) {
     double moveUnit = widget.gridWidth + widget.spaceBetweenGridDistance;
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
@@ -484,30 +495,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 begin: widget.dataMatrix[i][j].left.value,
                 end: widget.dataMatrix[i][j].left.value -
                     moveUnit * distanceMatrix[i][j])
-            .animate(gridMergeController)
+            .animate(controller)
               ..addListener(() {
                 setState(() {});
               });
       }
     }
-    widget.dataMatrix[0][0].left.addStatusListener((status) {
-      if (status == prefix0.AnimationStatus.completed) {
-        widget.dataMatrix =
-            getMovedLeftMergedGridMatrix(distanceMatrix, widget.dataMatrix);
-//        printDataMatrix();
-//        print('++++++++++++++');
-        updateDataListPosition();
-        getNewTwo();
-        setState(() {});
-//        printDataMatrix();
-//        print('++++++++++++++');
-      }
-    });
-    gridMergeController.forward();
   }
 
-  void moveRight() {
-    var distanceMatrix = getMoveRightDistance(widget.dataMatrix);
+  void moveRight(List<List<int>> distanceMatrix) {
     double moveUnit = widget.gridWidth + widget.spaceBetweenGridDistance;
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
@@ -515,29 +511,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 begin: widget.dataMatrix[i][j].left.value,
                 end: widget.dataMatrix[i][j].left.value +
                     moveUnit * distanceMatrix[i][j])
-            .animate(gridMoveController)
+            .animate(controller)
               ..addListener(() {
                 setState(() {});
               });
       }
     }
-    widget.dataMatrix[0][0].top.addStatusListener((status) {
-      if (status == prefix0.AnimationStatus.completed) {
-        widget.dataMatrix =
-            getMovedRightGridMatrix(distanceMatrix, widget.dataMatrix);
-        updateDataListPosition();
-        setState(() {});
-//        printDataMatrix();
-//        print('++++++++++++++');
-        mergeRight();
-      }
-    });
-    gridMoveController.forward();
   }
 
-  void mergeRight() {
-    var distanceMatrix = getMoveRightMergeDistance(widget.dataMatrix);
-    printMatrix(distanceMatrix);
+  void mergeRight(List<List<int>> distanceMatrix) {
     double moveUnit = widget.gridWidth + widget.spaceBetweenGridDistance;
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
@@ -545,25 +527,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 begin: widget.dataMatrix[i][j].left.value,
                 end: widget.dataMatrix[i][j].left.value +
                     moveUnit * distanceMatrix[i][j])
-            .animate(gridMergeController)
+            .animate(controller)
               ..addListener(() {
                 setState(() {});
               });
       }
     }
-    widget.dataMatrix[0][0].left.addStatusListener((status) {
-      if (status == prefix0.AnimationStatus.completed) {
-        widget.dataMatrix =
-            getMovedRightMergedGridMatrix(distanceMatrix, widget.dataMatrix);
-//        printDataMatrix();
-//        print('++++++++++++++');
-        updateDataListPosition();
-        getNewTwo();
-        setState(() {});
-//        printDataMatrix();
-//        print('++++++++++++++');
-      }
-    });
-    gridMergeController.forward();
   }
 }

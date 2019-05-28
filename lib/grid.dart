@@ -72,7 +72,11 @@ class _Grid extends State<Grid> {
         decoration: BoxDecoration(
             color: gridColor[widget.getValue()],
             borderRadius: BorderRadius.all(Radius.circular(widget.circular))),
-        child: Center(child: Text(getText())),
+        child: Center(
+            child: Text(
+          getText(),
+          style: numTextStyle,
+        )),
       ),
     );
   }

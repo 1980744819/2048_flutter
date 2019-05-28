@@ -1,6 +1,4 @@
-import 'package:flutter/widgets.dart';
-import 'package:flutter_2048/main.dart';
-
+import 'data.dart';
 
 List<List<int>> getMoveDownDistance(List<List<Data>> input) {
   var res = new List<List<int>>();
@@ -68,8 +66,6 @@ List<List<Data>> copyDataMatrix(List<List<Data>> input) {
   return res;
 }
 
-
-
 List<List<Data>> getMovedDownGridMatrix(
     List<List<int>> distanceMatrix, List<List<Data>> input) {
   for (int j = 0; j < input[0].length; j++) {
@@ -106,12 +102,11 @@ List<List<Data>> getMovedRightGridMatrix(
   return input;
 }
 
-
 List<List<Data>> getMovedDownMergedGridMatrix(
     List<List<int>> distanceMatrix, List<List<Data>> input) {
   for (int j = 0; j < input[0].length; j++) {
     for (int i = input.length - 2; i >= 0; i--) {
-      if(distanceMatrix[i][j]==0){
+      if (distanceMatrix[i][j] == 0) {
         continue;
       }
       int tmp = input[i][j].value + input[i + distanceMatrix[i][j]][j].value;
@@ -126,7 +121,7 @@ List<List<Data>> getMovedLeftMergedGridMatrix(
     List<List<int>> distanceMatrix, List<List<Data>> input) {
   for (int i = 0; i < input.length; i++) {
     for (int j = 1; j < input[i].length; j++) {
-      if(distanceMatrix[i][j]==0){
+      if (distanceMatrix[i][j] == 0) {
         continue;
       }
       var tmp = input[i][j].value + input[i][j - distanceMatrix[i][j]].value;
@@ -141,7 +136,7 @@ List<List<Data>> getMovedRightMergedGridMatrix(
     List<List<int>> distanceMatrix, List<List<Data>> input) {
   for (int i = 0; i < input.length; i++) {
     for (int j = input[i].length - 2; j >= 0; j--) {
-      if(distanceMatrix[i][j]==0){
+      if (distanceMatrix[i][j] == 0) {
         continue;
       }
       var tmp = input[i][j].value + input[i][j + distanceMatrix[i][j]].value;
@@ -151,8 +146,6 @@ List<List<Data>> getMovedRightMergedGridMatrix(
   }
   return input;
 }
-
-
 
 List<List<int>> getMoveDownMergeDistance(List<List<Data>> input) {
   var res = new List<List<int>>();
@@ -236,6 +229,7 @@ List<List<int>> getMoveUpDistance(List<List<Data>> input) {
   }
   return res;
 }
+
 List<List<Data>> getMovedUpGridMatrix(
     List<List<int>> distanceMatrix, List<List<Data>> input) {
   for (int j = 0; j < input[0].length; j++) {
@@ -247,6 +241,7 @@ List<List<Data>> getMovedUpGridMatrix(
   }
   return input;
 }
+
 List<List<int>> getMoveUpMergeDistance(List<List<Data>> input) {
   var res = new List<List<int>>();
   for (int i = 0; i < input.length; i++) {
@@ -268,11 +263,12 @@ List<List<int>> getMoveUpMergeDistance(List<List<Data>> input) {
   }
   return res;
 }
+
 List<List<Data>> getMovedUpMergedGridMatrix(
     List<List<int>> distanceMatrix, List<List<Data>> input) {
   for (int j = 0; j < input[0].length; j++) {
     for (int i = 0; i < input.length; i++) {
-      if(distanceMatrix[i][j]!=0){
+      if (distanceMatrix[i][j] != 0) {
         int tmp = input[i][j].value + input[i - distanceMatrix[i][j]][j].value;
         input[i][j].value = 0;
         input[i - distanceMatrix[i][j]][j].value = tmp;
