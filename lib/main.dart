@@ -7,7 +7,7 @@ import 'package:flutter_2048/conf.dart';
 import 'package:flutter_2048/grid.dart';
 import 'package:flutter_2048/tmpGrid.dart';
 import 'package:flutter_2048/utils.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'data.dart';
 
 //void main() => runApp(MyApp());
@@ -129,6 +129,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 
   AnimationController controller;
+  int highScore;
+  SharedPreferences prefs;
 
   void getNewController() {
     controller = new AnimationController(
@@ -160,8 +162,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    controller = getController();
     super.initState();
+    controller = getController();
   }
 
   int count = 0;
@@ -209,9 +211,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         .value = 2;
   }
 
-//  String getScore() {
-//    return widget.score.toString();
-//  }
+  setHighScore() async {
+//    print(score);
+    prefs = await SharedPreferences.getInstance();
+    highScore = prefs.getInt('score') ?? 0;
+    if (score > highScore) await prefs.setInt('score', score);
+    highScore = prefs.getInt('score') ?? 0;
+    print(highScore);
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -226,6 +234,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     if (widget.flag == null) widget.flag = true;
     initDataMatrix();
     if (score == null) score = 0;
+    setHighScore();
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -235,19 +244,37 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       ),
       body: prefix0.Column(
         children: <Widget>[
-          Center(
-            child: Container(
-              margin: EdgeInsets.only(
-                  top: widget.height / 30, bottom: widget.height / 30),
-              height: widget.height / 12,
-              width: widget.width / 3,
-              decoration: BoxDecoration(
-                  color: Colors.amber,
-                  borderRadius: BorderRadius.all(Radius.circular(5))),
-              child: Column(
-                children: <Widget>[Text("score"), Text(score.toString())],
+          Row(
+            mainAxisAlignment: prefix0.MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(
+                    top: widget.height / 40, bottom: widget.height / 40,right: widget.width/20),
+                height: widget.height / 15,
+                width: widget.width / 4,
+                decoration: BoxDecoration(
+                    color: Colors.amber,
+                    borderRadius: BorderRadius.all(Radius.circular(5))),
+                child: Column(
+                  children: <Widget>[Text("score"), Text(score.toString())],
+                ),
               ),
-            ),
+              Container(
+                margin: EdgeInsets.only(
+                    top: widget.height / 40, bottom: widget.height / 40,left: widget.width/20),
+                height: widget.height / 15,
+                width: widget.width / 4,
+                decoration: BoxDecoration(
+                    color: Colors.amber,
+                    borderRadius: BorderRadius.all(Radius.circular(5))),
+                child: Column(
+                  children: <Widget>[
+                    Text("best"),
+                    Text(highScore.toString())
+                  ],
+                ),
+              ),
+            ],
           ),
           Center(
             child: GestureDetector(
@@ -374,6 +401,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         getMovedUpMergedGridMatrix(distanceMatrix, widget.dataMatrix);
     updateDataListPosition();
     getNewTwo();
+//    await setHighScore();
     setState(() {});
     widget.flag = true;
   }
