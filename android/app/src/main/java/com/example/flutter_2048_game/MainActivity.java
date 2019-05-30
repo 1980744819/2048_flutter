@@ -1,4 +1,4 @@
-package com.example.flutter_2048;
+package com.example.flutter_2048_game;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
