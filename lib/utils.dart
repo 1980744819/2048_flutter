@@ -1,4 +1,9 @@
 import 'data.dart';
+import 'conf.dart';
+
+void updateScore(int val) {
+  score += val;
+}
 
 List<List<int>> getMoveDownDistance(List<List<Data>> input) {
   var res = new List<List<int>>();
@@ -110,8 +115,10 @@ List<List<Data>> getMovedDownMergedGridMatrix(
         continue;
       }
       int tmp = input[i][j].value + input[i + distanceMatrix[i][j]][j].value;
+      if (tmp == input[i][j].value * 2) updateScore(tmp);
       input[i][j].value = 0;
       input[i + distanceMatrix[i][j]][j].value = tmp;
+
     }
   }
   return input;
@@ -125,8 +132,10 @@ List<List<Data>> getMovedLeftMergedGridMatrix(
         continue;
       }
       var tmp = input[i][j].value + input[i][j - distanceMatrix[i][j]].value;
+      if (tmp == input[i][j].value * 2) updateScore(tmp);
       input[i][j].value = 0;
       input[i][j - distanceMatrix[i][j]].value = tmp;
+
     }
   }
   return input;
@@ -140,8 +149,10 @@ List<List<Data>> getMovedRightMergedGridMatrix(
         continue;
       }
       var tmp = input[i][j].value + input[i][j + distanceMatrix[i][j]].value;
+      if (tmp == input[i][j].value * 2) updateScore(tmp);
       input[i][j].value = 0;
       input[i][j + distanceMatrix[i][j]].value = tmp;
+
     }
   }
   return input;
@@ -270,8 +281,10 @@ List<List<Data>> getMovedUpMergedGridMatrix(
     for (int i = 0; i < input.length; i++) {
       if (distanceMatrix[i][j] != 0) {
         int tmp = input[i][j].value + input[i - distanceMatrix[i][j]][j].value;
+        if (tmp == input[i][j].value * 2) updateScore(tmp);
         input[i][j].value = 0;
         input[i - distanceMatrix[i][j]][j].value = tmp;
+
       }
     }
   }

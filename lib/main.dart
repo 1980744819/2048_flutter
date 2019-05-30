@@ -10,7 +10,10 @@ import 'package:flutter_2048/utils.dart';
 
 import 'data.dart';
 
-void main() => runApp(MyApp());
+//void main() => runApp(MyApp());
+void main() {
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -61,6 +64,7 @@ class MyHomePage extends StatefulWidget {
   bool flag;
 
   void resetDataList() {
+    score = 0;
     for (int i = 0; i < dataMatrix.length; i++) {
       for (int j = 0; j < dataMatrix[i].length; j++) {
         dataMatrix[i][j].value = Random.secure().nextBool() == true ? 0 : 2;
@@ -205,6 +209,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         .value = 2;
   }
 
+//  String getScore() {
+//    return widget.score.toString();
+//  }
+
   @override
   Widget build(BuildContext context) {
     widget.width = MediaQuery.of(context).size.width;
@@ -217,6 +225,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     widget.gridTopPositionList = widget.getPositions();
     if (widget.flag == null) widget.flag = true;
     initDataMatrix();
+    if (score == null) score = 0;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -224,79 +233,107 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           style: menuTextStyle,
         ),
       ),
-      body: Center(
-        child: GestureDetector(
-          child: Container(
-            height: widget.containerWidth,
-            width: widget.containerWidth,
-            color: Colors.grey,
-            child: Stack(
-              children: getMat(),
+      body: prefix0.Column(
+        children: <Widget>[
+          Center(
+            child: Container(
+              margin: EdgeInsets.only(
+                  top: widget.height / 30, bottom: widget.height / 30),
+              height: widget.height / 12,
+              width: widget.width / 3,
+              decoration: BoxDecoration(
+                  color: Colors.amber,
+                  borderRadius: BorderRadius.all(Radius.circular(5))),
+              child: Column(
+                children: <Widget>[Text("score"), Text(score.toString())],
+              ),
             ),
           ),
-          onHorizontalDragEnd: (DragEndDetails details) {
-            if (details.primaryVelocity > 0) {
-              print('right');
-              right();
-            } else {
-              print('left');
-              left();
-            }
-          },
-          onVerticalDragEnd: (DragEndDetails details) {
+          Center(
+            child: GestureDetector(
+              child: Container(
+                height: widget.containerWidth,
+                width: widget.containerWidth,
+                color: Colors.grey,
+                child: Stack(
+                  children: getMat(),
+                ),
+              ),
+              onHorizontalDragEnd: (DragEndDetails details) {
+                if (details.primaryVelocity > 0) {
+                  print('right');
+                  right();
+                } else {
+                  print('left');
+                  left();
+                }
+              },
+              onVerticalDragEnd: (DragEndDetails details) {
 //                print();
-            if (details.primaryVelocity < 0) {
-              print('up');
+                if (details.primaryVelocity < 0) {
+                  print('up');
 //              moveUp();
-              up();
-            } else {
-              print('down');
-              down();
+                  up();
+                } else {
+                  print('down');
+                  down();
 //              getNewController();
-            }
-          },
-        ),
+                }
+              },
+            ),
+          ),
+//          Column(
+//            children: <Widget>[
+//              FlatButton(
+//                onPressed: () {
+//                  up();
+//                },
+//                child: Icon(Icons.keyboard_arrow_up),
+//              ),
+//              Row(
+//                mainAxisAlignment: MainAxisAlignment.center,
+//                children: <Widget>[
+//                  FlatButton(
+//                    onPressed: () {
+//                      left();
+//                    },
+//                    child: Icon(Icons.keyboard_arrow_left),
+//                  ),
+//                  FlatButton(
+//                    onPressed: () {
+//                      widget.resetDataList();
+//                      setState(() {});
+//                    },
+//                    child: Icon(Icons.refresh),
+//                  ),
+//                  FlatButton(
+//                    onPressed: () {
+//                      right();
+//                    },
+//                    child: Icon(Icons.keyboard_arrow_right),
+//                  ),
+//                ],
+//              ),
+//              FlatButton(
+//                onPressed: () {
+//                  down();
+//                },
+//                child: Icon(Icons.keyboard_arrow_down),
+//              ),
+//            ],
+//          )
+        ],
       ),
       bottomNavigationBar: prefix0.Wrap(
         alignment: prefix0.WrapAlignment.center,
         children: <Widget>[
           FlatButton(
             onPressed: () {
-//              moveUp();
-//              getNewController();
-              up();
-            },
-            child: Text(
-              "UP",
-              style: buttonTextStyle,
-            ),
-          ),
-          FlatButton(
-            onPressed: () {
-              down();
-//              getNewController();
-            },
-            child: Text("DOWN",style: buttonTextStyle),
-          ),
-          FlatButton(
-            onPressed: () {
-              left();
-            },
-            child: Text("LEFT",style: buttonTextStyle),
-          ),
-          FlatButton(
-            onPressed: () {
-              right();
-            },
-            child: Text("RIGHT",style: buttonTextStyle),
-          ),
-          FlatButton(
-            onPressed: () {
               widget.resetDataList();
               setState(() {});
             },
-            child: Text("RESET",style: buttonTextStyle),
-          )
+            child: Icon(Icons.refresh),
+          ),
         ],
       ),
     );

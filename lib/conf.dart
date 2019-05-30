@@ -21,3 +21,4 @@ const numTextStyle =
     TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.brown);
 const buttonTextStyle = TextStyle(
     fontSize: 15.0, fontWeight: FontWeight.normal, color: Colors.black);
+int score;
