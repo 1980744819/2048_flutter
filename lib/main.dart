@@ -22,15 +22,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
           primarySwatch: Colors.orange,
           fontFamily: 'StarJedi'),
       home: MyHomePage(title: '2048'),
@@ -94,12 +94,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
         widget.dataMatrix[i][j].left = new Tween(
-            begin: widget.gridLeftPositionList[j],
-            end: widget.gridLeftPositionList[j])
+                begin: widget.gridLeftPositionList[j],
+                end: widget.gridLeftPositionList[j])
             .animate(controller);
         widget.dataMatrix[i][j].top = new Tween(
-            begin: widget.gridTopPositionList[i],
-            end: widget.gridTopPositionList[i])
+                begin: widget.gridTopPositionList[i],
+                end: widget.gridTopPositionList[i])
             .animate(controller);
       }
     }
@@ -117,12 +117,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             tmpVal,
 //            gridLeftPositionList[j],
             new Tween(
-                begin: widget.gridLeftPositionList[j],
-                end: widget.gridLeftPositionList[j])
+                    begin: widget.gridLeftPositionList[j],
+                    end: widget.gridLeftPositionList[j])
                 .animate(controller),
             new Tween(
-                begin: widget.gridTopPositionList[i],
-                end: widget.gridTopPositionList[i])
+                    begin: widget.gridTopPositionList[i],
+                    end: widget.gridTopPositionList[i])
                 .animate(controller)));
       }
     }
@@ -178,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     for (int i = 1; i < widget.dataMatrix.length; i++) {
       for (int j = 1; j < widget.dataMatrix[i].length; j++) {
         if (widget.dataMatrix[i][j].value ==
-            widget.dataMatrix[i - 1][j].value ||
+                widget.dataMatrix[i - 1][j].value ||
             widget.dataMatrix[i][j].value ==
                 widget.dataMatrix[i][j - 1].value) {
           return false;
@@ -208,7 +208,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     int index = Random.secure().nextInt(res.length);
     widget
         .dataMatrix[res[index] ~/ widget.dataMatrix.length]
-    [res[index] % widget.dataMatrix.length]
+            [res[index] % widget.dataMatrix.length]
         .value = 2;
   }
 
@@ -232,14 +232,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    widget.width = MediaQuery
-        .of(context)
-        .size
-        .width;
-    widget.height = MediaQuery
-        .of(context)
-        .size
-        .height;
+    widget.width = MediaQuery.of(context).size.width;
+    widget.height = MediaQuery.of(context).size.height;
     widget.containerWidth = getContainerWidth();
     widget.spaceBetweenGridDistance = widget.containerWidth / 60;
     widget.gridWidth =
@@ -292,8 +286,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 //                    Text(highScore.toString()),
                     FutureBuilder<String>(
                       future: getHighScore(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot snapshot) {
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.hasData) {
                           return Text(snapshot.data);
                         } else
@@ -419,17 +412,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     controller = getController();
     List<List<int>> distanceMatrix = getMoveUpDistance(widget.dataMatrix);
     moveUp(distanceMatrix);
-    await controller
-        .forward()
-        .orCancel;
+    await controller.forward().orCancel;
     widget.dataMatrix = getMovedUpGridMatrix(distanceMatrix, widget.dataMatrix);
     updateDataListPosition();
     controller = getController();
     distanceMatrix = getMoveUpMergeDistance(widget.dataMatrix);
     mergeUp(distanceMatrix);
-    await controller
-        .forward()
-        .orCancel;
+    await controller.forward().orCancel;
     widget.dataMatrix =
         getMovedUpMergedGridMatrix(distanceMatrix, widget.dataMatrix);
     updateDataListPosition();
@@ -445,18 +434,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     controller = getController();
     List<List<int>> distanceMatrix = getMoveDownDistance(widget.dataMatrix);
     moveDown(distanceMatrix);
-    await controller
-        .forward()
-        .orCancel;
+    await controller.forward().orCancel;
     widget.dataMatrix =
         getMovedDownGridMatrix(distanceMatrix, widget.dataMatrix);
     updateDataListPosition();
     controller = getController();
     distanceMatrix = getMoveDownMergeDistance(widget.dataMatrix);
     mergeDown(distanceMatrix);
-    await controller
-        .forward()
-        .orCancel;
+    await controller.forward().orCancel;
     widget.dataMatrix =
         getMovedDownMergedGridMatrix(distanceMatrix, widget.dataMatrix);
     updateDataListPosition();
@@ -471,18 +456,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     controller = getController();
     List<List<int>> distanceMatrix = getMoveLeftDistance(widget.dataMatrix);
     moveLeft(distanceMatrix);
-    await controller
-        .forward()
-        .orCancel;
+    await controller.forward().orCancel;
     widget.dataMatrix =
         getMovedLeftGridMatrix(distanceMatrix, widget.dataMatrix);
     updateDataListPosition();
     controller = getController();
     distanceMatrix = getMoveLeftMergeDistance(widget.dataMatrix);
     mergeLeft(distanceMatrix);
-    await controller
-        .forward()
-        .orCancel;
+    await controller.forward().orCancel;
     widget.dataMatrix =
         getMovedLeftMergedGridMatrix(distanceMatrix, widget.dataMatrix);
     updateDataListPosition();
@@ -497,18 +478,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     controller = getController();
     List<List<int>> distanceMatrix = getMoveRightDistance(widget.dataMatrix);
     moveRight(distanceMatrix);
-    await controller
-        .forward()
-        .orCancel;
+    await controller.forward().orCancel;
     widget.dataMatrix =
         getMovedRightGridMatrix(distanceMatrix, widget.dataMatrix);
     updateDataListPosition();
     controller = getController();
     distanceMatrix = getMoveRightMergeDistance(widget.dataMatrix);
     mergeRight(distanceMatrix);
-    await controller
-        .forward()
-        .orCancel;
+    await controller.forward().orCancel;
     widget.dataMatrix =
         getMovedRightMergedGridMatrix(distanceMatrix, widget.dataMatrix);
     updateDataListPosition();
@@ -522,13 +499,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
         widget.dataMatrix[i][j].top = new Tween(
-            begin: widget.dataMatrix[i][j].top.value,
-            end: widget.dataMatrix[i][j].top.value -
-                moveUnit * distanceMatrix[i][j])
+                begin: widget.dataMatrix[i][j].top.value,
+                end: widget.dataMatrix[i][j].top.value -
+                    moveUnit * distanceMatrix[i][j])
             .animate(controller)
-          ..addListener(() {
-            setState(() {});
-          });
+              ..addListener(() {
+                setState(() {});
+              });
       }
     }
   }
@@ -538,13 +515,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
         widget.dataMatrix[i][j].top = new Tween(
-            begin: widget.dataMatrix[i][j].top.value,
-            end: widget.dataMatrix[i][j].top.value -
-                moveUnit * distanceMatrix[i][j])
+                begin: widget.dataMatrix[i][j].top.value,
+                end: widget.dataMatrix[i][j].top.value -
+                    moveUnit * distanceMatrix[i][j])
             .animate(controller)
-          ..addListener(() {
-            setState(() {});
-          });
+              ..addListener(() {
+                setState(() {});
+              });
       }
     }
   }
@@ -554,13 +531,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
         widget.dataMatrix[i][j].top = new Tween(
-            begin: widget.dataMatrix[i][j].top.value,
-            end: widget.dataMatrix[i][j].top.value +
-                moveUnit * distanceMatrix[i][j])
+                begin: widget.dataMatrix[i][j].top.value,
+                end: widget.dataMatrix[i][j].top.value +
+                    moveUnit * distanceMatrix[i][j])
             .animate(controller)
-          ..addListener(() {
-            setState(() {});
-          });
+              ..addListener(() {
+                setState(() {});
+              });
       }
     }
   }
@@ -570,13 +547,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
         widget.dataMatrix[i][j].top = new Tween(
-            begin: widget.dataMatrix[i][j].top.value,
-            end: widget.dataMatrix[i][j].top.value +
-                moveUnit * distanceMatrix[i][j])
+                begin: widget.dataMatrix[i][j].top.value,
+                end: widget.dataMatrix[i][j].top.value +
+                    moveUnit * distanceMatrix[i][j])
             .animate(controller)
-          ..addListener(() {
-            setState(() {});
-          });
+              ..addListener(() {
+                setState(() {});
+              });
       }
     }
   }
@@ -586,13 +563,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
         widget.dataMatrix[i][j].left = new Tween(
-            begin: widget.dataMatrix[i][j].left.value,
-            end: widget.dataMatrix[i][j].left.value -
-                moveUnit * distanceMatrix[i][j])
+                begin: widget.dataMatrix[i][j].left.value,
+                end: widget.dataMatrix[i][j].left.value -
+                    moveUnit * distanceMatrix[i][j])
             .animate(controller)
-          ..addListener(() {
-            setState(() {});
-          });
+              ..addListener(() {
+                setState(() {});
+              });
       }
     }
   }
@@ -602,13 +579,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
         widget.dataMatrix[i][j].left = new Tween(
-            begin: widget.dataMatrix[i][j].left.value,
-            end: widget.dataMatrix[i][j].left.value -
-                moveUnit * distanceMatrix[i][j])
+                begin: widget.dataMatrix[i][j].left.value,
+                end: widget.dataMatrix[i][j].left.value -
+                    moveUnit * distanceMatrix[i][j])
             .animate(controller)
-          ..addListener(() {
-            setState(() {});
-          });
+              ..addListener(() {
+                setState(() {});
+              });
       }
     }
   }
@@ -618,13 +595,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
         widget.dataMatrix[i][j].left = new Tween(
-            begin: widget.dataMatrix[i][j].left.value,
-            end: widget.dataMatrix[i][j].left.value +
-                moveUnit * distanceMatrix[i][j])
+                begin: widget.dataMatrix[i][j].left.value,
+                end: widget.dataMatrix[i][j].left.value +
+                    moveUnit * distanceMatrix[i][j])
             .animate(controller)
-          ..addListener(() {
-            setState(() {});
-          });
+              ..addListener(() {
+                setState(() {});
+              });
       }
     }
   }
@@ -634,13 +611,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     for (int i = 0; i < widget.dataMatrix.length; i++) {
       for (int j = 0; j < widget.dataMatrix[i].length; j++) {
         widget.dataMatrix[i][j].left = new Tween(
-            begin: widget.dataMatrix[i][j].left.value,
-            end: widget.dataMatrix[i][j].left.value +
-                moveUnit * distanceMatrix[i][j])
+                begin: widget.dataMatrix[i][j].left.value,
+                end: widget.dataMatrix[i][j].left.value +
+                    moveUnit * distanceMatrix[i][j])
             .animate(controller)
-          ..addListener(() {
-            setState(() {});
-          });
+              ..addListener(() {
+                setState(() {});
+              });
       }
     }
   }
